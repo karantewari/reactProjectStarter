@@ -7,9 +7,9 @@ class App extends Component {
 
   state = {
     persons: [
-      { name: "Karan" },
-      { name: "Anand" },
-      { name: "Vritul" }
+      { id:'asdas', name: "Karan" },
+      { id:'qweqw', name: "Anand" },
+      { id:'zxcxzc', name: "Vritul" }
     ],
     showPersons : false
   }
@@ -24,14 +24,23 @@ class App extends Component {
     })
   }
 
-  chnagedHandler = (event) => {
-    this.setState({
-      persons: [
-        { name: "Karan" },
-        { name: event.target.value },
-        { name: "Tullu" }
-      ]
+  chnagedHandler = (event, id) => {
+
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
     })
+
+    const person = {
+      ...this.state.persons[personIndex]
+    }
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState({
+      persons:persons
+    });
   }
 
   togglePersonHandler = () => {
@@ -41,16 +50,29 @@ class App extends Component {
     })
   }
 
+  deletePersonHandler = (personIndex) => {
+    const person = [...this.state.persons];
+    person.splice(personIndex,1);
+    this.setState({
+      persons:person
+    })
+  }
+
   render() {
 
     let person = null;
     if(this.state.showPersons){
       person = (
         <div>
-          <Person name={this.state.persons[0].name} />
-          <Person name={this.state.persons[1].name} click={() => this.switchNameHandler('Izaki!!')} changed={this.chnagedHandler} />
-          <Person name={this.state.persons[2].name}>My Hobies : Racing</Person>
-      </div>
+        {this.state.persons.map((person,index) => {
+          return <Person 
+          name={person.name} 
+          click={()=> this.deletePersonHandler(index)}
+          key={person.id}
+          changed = {(event) => this.chnagedHandler(event, person.id )}
+          />
+        })}
+        </div>
       )
     }
 
